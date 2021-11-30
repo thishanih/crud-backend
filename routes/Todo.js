@@ -3,29 +3,33 @@ const todoRouter = express.Router();
 const todoModel = require("../model/TodoModel");
 const { addTodoValidation, updateTodoValidation } = require("../validation");
 var moment = require("moment");
-var datetime = moment().format("YYYY-MM-DD");
 
 todoRouter.post("/addTodo", async (req, res) => {
   const { error } = addTodoValidation(req.body);
 
   if (error) return res.status(400).send(error.details[0].message);
 
-  // Regsiter new Post
-  const Todo = new todoModel({
-    todoTitle: req.body.todoTitle,
-    dates: req.body.dates,
-    status: "Noted",
-  });
+  var filteredArray = await todoModel.find({ dates: req.body.dates });
+  if (filteredArray) {
+    res.status(400).send("You cannot Add 2 Todo one days");
+  } else {
+    // Regsiter new Post
+    const Todo = new todoModel({
+      todoTitle: req.body.todoTitle,
+      dates: req.body.dates,
+      status: "Noted",
+    });
 
-  try {
-    const savedTodo = await Todo.save();
-    res.json(savedTodo);
-    console.log(
-      "🚀 ~ file: Todo.js ~ line 27 ~ todoRouter.post ~ savedTodo",
-      savedTodo
-    );
-  } catch (error) {
-    res.json({ message: error });
+    try {
+      const savedTodo = await Todo.save();
+      res.json(savedTodo);
+      console.log(
+        "🚀 ~ file: Todo.js ~ line 27 ~ todoRouter.post ~ savedTodo",
+        savedTodo
+      );
+    } catch (error) {
+      res.json({ message: error });
+    }
   }
 });
 
@@ -62,7 +66,6 @@ todoRouter.delete("/delectTodo/:TodoId", async (req, res) => {
 });
 
 todoRouter.put("/updateTodo/:TodoId", async (req, res) => {
-    
   const { error } = updateTodoValidation(req.body);
 
   if (error) return res.status(400).send(error.details[0].message);
