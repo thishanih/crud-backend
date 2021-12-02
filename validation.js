@@ -2,7 +2,7 @@ const Joi = require("joi");
 
 const addTodoValidation = (data) => {
   const Todo_Schema = Joi.object({
-    todoTitle: Joi.string().min(10).max(200).required(),
+    todoTitle: Joi.string().min(10).max(100).required(),
     // dates:Joi.date().format('YYYY-MM-DD'),
     dates: Joi.string().required(),
   });
@@ -12,9 +12,9 @@ const addTodoValidation = (data) => {
 
 const updateTodoValidation = (data) => {
   const Todo_Schema = Joi.object({
-    todoTitle: Joi.string().min(10).max(200).required(),
+    todoTitle: Joi.string().min(10).max(100).required(),
     status: Joi.string().required(),
-    dates: Joi.string().required(),
+    // dates: Joi.string().required(),
   });
 
   return Todo_Schema.validate(data);

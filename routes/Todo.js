@@ -4,13 +4,17 @@ const todoModel = require("../model/TodoModel");
 const { addTodoValidation, updateTodoValidation } = require("../validation");
 var moment = require("moment");
 
+
+
 todoRouter.post("/addTodo", async (req, res) => {
   const { error } = addTodoValidation(req.body);
 
   if (error) return res.status(400).send(error.details[0].message);
 
   var filteredArray = await todoModel.find({ dates: req.body.dates });
-  if (filteredArray) {
+  console.log(filteredArray)
+
+  if (filteredArray.length != 0) {
     res.status(400).send("You cannot Add 2 Todo one days");
   } else {
     // Regsiter new Post
@@ -23,15 +27,13 @@ todoRouter.post("/addTodo", async (req, res) => {
     try {
       const savedTodo = await Todo.save();
       res.json(savedTodo);
-      console.log(
-        "🚀 ~ file: Todo.js ~ line 27 ~ todoRouter.post ~ savedTodo",
-        savedTodo
-      );
     } catch (error) {
       res.json({ message: error });
     }
   }
 });
+
+
 
 // Display  data
 
@@ -43,6 +45,8 @@ todoRouter.get("/", async (req, res) => {
     res.json({ message: error });
   }
 });
+
+
 
 todoRouter.get("/:TodoId", async (req, res) => {
   try {
